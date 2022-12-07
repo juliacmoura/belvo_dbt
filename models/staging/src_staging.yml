@@ -1,0 +1,24 @@
+
+version: 2
+
+sources:
+    - name: raw_sources
+      description: "Raw Sources"
+      database: belvo_tables
+      schema: belvo_tables
+      tables:
+        - name: companies_deals_associations
+        - name: companies
+        - name: contacts_deals_associations
+        - name: contacts 
+        - name: customers 
+        - name: deals
+        - name: owners
+
+    - name: modeling_sources
+      description: "Modeling Sources"
+      database: belvo_tables
+      schema: dbt_juliacmoura
+      tables:
+        - name: deals_info
+        
