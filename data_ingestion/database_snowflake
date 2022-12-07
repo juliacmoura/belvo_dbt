@@ -1,0 +1,314 @@
+create or replace warehouse belvo;
+
+create or replace database belvo_tables;
+
+create schema belvo_tables;
+
+drop table if exists belvo_tables.companies;
+create table belvo_tables.companies
+
+(
+  id integer,
+  name string,
+  country string
+);
+
+use database belvo_tables;
+
+create or replace file format csv_format 
+type = 'CSV'
+field_delimiter = ','
+FIELD_OPTIONALLY_ENCLOSED_BY = '"'
+skip_header = 1
+error_on_column_count_mismatch=false
+null_if = ('NULL', 'null')
+empty_field_as_null = true;
+
+create or replace stage companies_stage
+  url='s3://belvo-case/belvo_analytics_engineer_challenge_fake_data/companies.csv'
+  credentials=(aws_key_id='AKIASUSMY2OJBC6GWUUW' aws_secret_key='DKJyw8eqRKAjPUJBUrRDcXnvnhgdPKHTy29gFYnN')
+  file_format = csv_format;
+  
+ ls @companies_stage;
+ 
+ select
+  c.$1,
+  c.$2,
+  c.$3
+from @companies_stage c;
+
+COPY INTO belvo_tables.companies (id, name, country) from 
+
+(
+  select
+  c.$1,
+  c.$2,
+  c.$3
+from @companies_stage c
+);
+
+select * from belvo_tables.companies;
+
+drop table if exists belvo_tables.companies_deals_associations;
+
+create table belvo_tables.companies_deals_associations
+
+(
+  company_id string,
+  deal_ids string
+);
+
+
+create or replace stage companies_deals_associations_stage
+  url='s3://belvo-case/belvo_analytics_engineer_challenge_fake_data/companies_deals_associations.csv'
+  credentials=(aws_key_id='AKIASUSMY2OJBC6GWUUW' aws_secret_key='DKJyw8eqRKAjPUJBUrRDcXnvnhgdPKHTy29gFYnN')
+  file_format = csv_format;
+  
+ ls @companies_deals_associations_stage;
+ 
+ select
+  c.$1,
+  c.$2,
+  c.$3
+from @companies_deals_associations_stage c;
+
+COPY INTO belvo_tables.companies_deals_associations (company_id, deal_ids) from 
+
+(
+  select
+  c.$1,
+  c.$2
+from @companies_deals_associations_stage c
+);
+
+select * from belvo_tables.companies_deals_associations;
+
+
+drop table if exists belvo_tables.contacts_deals_associations;
+create table belvo_tables.contacts_deals_associations
+
+(
+  contact_id integer,
+  deal_ids string
+);
+
+
+
+create or replace stage contacts_deals_associations_stage
+  url='s3://belvo-case/belvo_analytics_engineer_challenge_fake_data/contacts_deals_associations.csv'
+  credentials=(aws_key_id='AKIASUSMY2OJBC6GWUUW' aws_secret_key='DKJyw8eqRKAjPUJBUrRDcXnvnhgdPKHTy29gFYnN')
+  file_format = csv_format;
+  
+ ls @contacts_deals_associations_stage;
+ 
+ select
+  c.$1,
+  c.$2
+from @contacts_deals_associations_stage c;
+
+COPY INTO belvo_tables.contacts_deals_associations (contact_id, deal_ids) from 
+
+(
+  select
+  c.$1,
+  c.$2
+from @contacts_deals_associations_stage c
+);
+
+select * from belvo_tables.contacts_deals_associations;
+
+
+drop table if exists belvo_tables.contacts;
+create table belvo_tables.contacts
+
+(
+  id integer,
+  name string,
+  job string,
+  country string,
+  channel string
+);
+
+
+
+create or replace stage contacts_stage
+  url='s3://belvo-case/belvo_analytics_engineer_challenge_fake_data/contacts.csv'
+  credentials=(aws_key_id='AKIASUSMY2OJBC6GWUUW' aws_secret_key='DKJyw8eqRKAjPUJBUrRDcXnvnhgdPKHTy29gFYnN')
+  file_format = csv_format;
+  
+ ls @contacts_stage;
+ 
+ select
+  c.$1,
+  c.$2,
+  c.$3,
+  c.$4,
+  c.$5
+from @contacts_stage c;
+
+COPY INTO belvo_tables.contacts (id, name, job, country, channel) from 
+
+(
+  select
+  c.$1,
+  c.$2,
+  c.$3,
+  c.$4,
+  c.$5
+from @contacts_stage c
+);
+
+select * from belvo_tables.contacts;
+
+
+drop table if exists belvo_tables.customers;
+create table belvo_tables.customers
+
+(
+  ID integer,
+  Owner_ID integer,
+  Customer_Name string, 
+  Customer_Phase string,
+  Start_Date timestamp,
+  End_Date date
+);
+
+
+
+create or replace stage customers_stage
+  url='s3://belvo-case/belvo_analytics_engineer_challenge_fake_data/customers - customers (3).csv'
+  credentials=(aws_key_id='AKIASUSMY2OJBC6GWUUW' aws_secret_key='DKJyw8eqRKAjPUJBUrRDcXnvnhgdPKHTy29gFYnN')
+  file_format = csv_format;
+  
+ ls @customers_stage;
+ 
+ select
+  c.$1,
+  c.$2,
+  c.$3,
+  c.$4,
+  c.$5,
+  c.$6
+from @customers_stage c;
+
+COPY INTO belvo_tables.customers (id, Owner_ID, Customer_Name, Customer_Phase, Start_Date, End_Date) from 
+
+(
+  select
+  c.$1,
+  c.$2,
+  c.$3,
+  c.$4,
+  c.$5,
+  c.$6
+from @customers_stage c
+);
+
+select * from belvo_tables.customers;
+
+
+drop table if exists belvo_tables.deals;
+create table belvo_tables.deals
+
+(
+  id integer,
+  externalId integer,
+  ownerId integer,
+  name string,
+  product string,
+  amount integer,
+  closed string,
+  status string,
+  created_date timestamp,
+  closed_2 timestamp
+);
+
+
+create or replace stage deals_stage
+  url='s3://belvo-case/belvo_analytics_engineer_challenge_fake_data/deals.csv'
+  credentials=(aws_key_id='AKIASUSMY2OJBC6GWUUW' aws_secret_key='DKJyw8eqRKAjPUJBUrRDcXnvnhgdPKHTy29gFYnN')
+  file_format = csv_format;
+  
+ ls @deals_stage;
+ 
+ select
+  c.$1,
+  c.$2,
+  c.$3,
+  c.$4,
+  c.$5,
+  c.$6,
+  c.$7,
+  c.$8,
+  c.$9,
+  c.$10
+from @deals_stage c;
+
+COPY INTO belvo_tables.deals (id,externalId,ownerId,name,product,amount,closed,status,created_date,closed_2) from 
+
+(
+  select
+  c.$1,
+  c.$2,
+  c.$3,
+  c.$4,
+  c.$5,
+  c.$6,
+  c.$7,
+  c.$8,
+  c.$9,
+  c.$10
+from @deals_stage c
+);
+
+select * from belvo_tables.deals;
+
+
+drop table if exists  belvo_tables.owners;
+create table belvo_tables.owners
+
+(
+  id integer,
+  Name string,
+  Team string,
+  Job_position string
+);
+
+
+
+create or replace stage owners_stage
+  url='s3://belvo-case/belvo_analytics_engineer_challenge_fake_data/owners.csv'
+  credentials=(aws_key_id='AKIASUSMY2OJBC6GWUUW' aws_secret_key='DKJyw8eqRKAjPUJBUrRDcXnvnhgdPKHTy29gFYnN')
+  file_format = csv_format;
+  
+ ls @owners_stage;
+ 
+ select
+  c.$1,
+  c.$2,
+  c.$3,
+  c.$4
+from @owners_stage c;
+
+COPY INTO belvo_tables.owners (id, name, team, job_position) from 
+
+(
+  select
+  c.$1,
+  c.$2,
+  c.$3,
+  c.$4
+  
+from @owners_stage c
+);
+
+select 
+contact_id,
+company_id,
+regexp_replace(regexp_replace(deal_ids, '\\['),'\\]') as deal_ids,
+company_name,
+contact_name,
+job,
+channel,
+country
+from belvo_tables.dbt_juliacmoura.deals_info
